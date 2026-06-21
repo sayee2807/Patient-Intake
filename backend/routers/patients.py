@@ -17,6 +17,19 @@ class PatientCreate(BaseModel):
     gender: str
     contact: str
     symptoms: str
+    ai_urgency: Optional[str] = None
+    ai_department: Optional[str] = None
+    ai_reasoning: Optional[str] = None
+    final_urgency: Optional[str] = None
+    final_department: Optional[str] = None
+    was_overridden: Optional[bool] = False
+
+class PatientSuggestion(BaseModel):
+    name: str
+    age: int
+    gender: str
+    contact: str
+    symptoms: str
 
 class TriageOverride(BaseModel):
     final_urgency: str
@@ -25,24 +38,48 @@ class TriageOverride(BaseModel):
 
 # --- Routes ---
 
+@router.post("/patients/suggest")
+def suggest_patient(patient: PatientSuggestion):
+    triage = get_triage_suggestion(patient.symptoms)
+    return {
+        "name": patient.name,
+        "age": patient.age,
+        "gender": patient.gender,
+        "contact": patient.contact,
+        "symptoms": patient.symptoms,
+        "ai_urgency": triage["urgency"],
+        "ai_department": triage["department"],
+        "ai_reasoning": triage["reasoning"],
+    }
+
 @router.post("/patients")
 def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
-    # Step 1: Get AI suggestion
-    triage = get_triage_suggestion(patient.symptoms)
+    if patient.ai_urgency and patient.ai_department and patient.ai_reasoning:
+        ai_urgency = patient.ai_urgency
+        ai_department = patient.ai_department
+        ai_reasoning = patient.ai_reasoning
+    else:
+        triage = get_triage_suggestion(patient.symptoms)
+        ai_urgency = triage["urgency"]
+        ai_department = triage["department"]
+        ai_reasoning = triage["reasoning"]
 
-    # Step 2: Save to database
+    final_urgency = patient.final_urgency or ai_urgency
+    final_department = patient.final_department or ai_department
+    was_overridden = patient.was_overridden if patient.was_overridden is not None else False
+
     db_patient = Patient(
         name=patient.name,
         age=patient.age,
         gender=patient.gender,
         contact=patient.contact,
         symptoms=patient.symptoms,
-        ai_urgency=triage["urgency"],
-        ai_department=triage["department"],
-        ai_reasoning=triage["reasoning"],
-        final_urgency=triage["urgency"],
-        final_department=triage["department"],
-        was_overridden=False
+        ai_urgency=ai_urgency,
+        ai_department=ai_department,
+        ai_reasoning=ai_reasoning,
+        final_urgency=final_urgency,
+        final_department=final_department,
+        was_overridden=was_overridden
     )
 
     db.add(db_patient)

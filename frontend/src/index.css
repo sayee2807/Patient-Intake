@@ -1,13 +1,23 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  --color-primary: #0F6E56;
+  --color-surface: #E1F5EE;
+  --color-action: #185FA5;
+  --color-neutral: #B4B2A9;
+  --color-urgent: #E24B4A;
+  --color-priority: #DD6B20;
+  --color-routine: #38A169;
+  --color-text: #1A202C;
+  --color-white: #FFFFFF;
+  --sidebar-width: 240px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f7faf9;
+  color: var(--color-text);
 }
+
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
