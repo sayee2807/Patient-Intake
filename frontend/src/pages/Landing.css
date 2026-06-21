@@ -42,19 +42,6 @@
 }
 .landing-nav-links a:hover { color: var(--color-primary); }
 
-.btn-open-dash {
-  padding: 9px 20px;
-  border: 1.5px solid #d0d5dd;
-  border-radius: 20px;
-  background: white;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-open-dash:hover { border-color: var(--color-primary); color: var(--color-primary); }
-
 /* Hero */
 .hero {
   text-align: center;
@@ -110,7 +97,7 @@
   margin-bottom: 40px;
 }
 
-.btn-get-started {
+.btn-signin {
   padding: 14px 32px;
   background: var(--color-primary);
   color: white;
@@ -121,9 +108,9 @@
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
 }
-.btn-get-started:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-signin:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.btn-view-dash {
+.btn-create-acc {
   padding: 14px 32px;
   background: white;
   color: var(--color-text);
@@ -134,7 +121,7 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-view-dash:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.btn-create-acc:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
 
 /* How it works */

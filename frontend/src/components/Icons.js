@@ -136,6 +136,13 @@ export const ChartIcon = () => (
   </SvgIcon>
 );
 
+export const PowerIcon = () => (
+  <SvgIcon>
+    <path d="M12 2v10" />
+    <path d="M5.2 6.2a8 8 0 1 0 13.6 0" />
+  </SvgIcon>
+);
+
 export const HeartIcon = () => (
   <SvgIcon>
     <path d="M12 20s-6-4.35-9-8.5C1 7.5 3.5 4 7 4c1.8 0 3.4 1 4 2.5C12.6 5 14.2 4 16 4c3.5 0 6 3.5 5 7.5-3 4.15-9 8.5-9 8.5z" />

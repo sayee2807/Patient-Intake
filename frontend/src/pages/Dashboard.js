@@ -175,9 +175,14 @@ const Dashboard = () => {
     try {
       const [sRes, pRes] = await Promise.all([getStats(), getAllPatients()]);
       setStats(sRes.data);
-      const sorted = [...pRes.data].sort((a, b) =>
-        (URGENCY_ORDER[a.final_urgency] ?? 2) - (URGENCY_ORDER[b.final_urgency] ?? 2)
-      );
+      const sorted = [...pRes.data].sort((a, b) => {
+        const urgencyDiff = (URGENCY_ORDER[a.final_urgency] ?? 2) - (URGENCY_ORDER[b.final_urgency] ?? 2);
+        if (urgencyDiff !== 0) return urgencyDiff;
+
+        const aTime = a.created_at ? new Date(a.created_at).getTime() : a.id;
+        const bTime = b.created_at ? new Date(b.created_at).getTime() : b.id;
+        return aTime - bTime;
+      });
       setWaiting(sorted);
     } catch (e) {
       console.error(e);

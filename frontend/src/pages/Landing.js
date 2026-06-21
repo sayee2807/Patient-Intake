@@ -15,7 +15,6 @@ const Landing = () => {
         <div className="landing-nav-links">
           <a href="#how">How it works</a>
         </div>
-        <button className="btn-open-dash" onClick={() => navigate('/dashboard')}>Open dashboard</button>
       </nav>
 
       <section className="hero">
@@ -24,10 +23,12 @@ const Landing = () => {
         <h1>Patient Intake</h1>
         <p>Streamline patient registration, AI-assisted triage, and clinic workflow management.</p>
         <div className="hero-btns">
-          <button className="btn-get-started" onClick={() => navigate('/register')}>
-            Get Started <ArrowRightIcon />
+          <button className="btn-signin" onClick={() => navigate('/login')}>
+            Sign In →
           </button>
-          <button className="btn-view-dash" onClick={() => navigate('/dashboard')}>View live dashboard</button>
+          <button className="btn-create-acc" onClick={() => navigate('/register-user')}>
+            Create Account
+          </button>
         </div>
       </section>
 

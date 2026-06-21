@@ -6,6 +6,7 @@ from models.patient import Patient
 from services.triage_service import get_triage_suggestion
 from pydantic import BaseModel
 from typing import Optional
+from dependencies import get_current_user
 
 router = APIRouter()
 
@@ -53,7 +54,7 @@ def suggest_patient(patient: PatientSuggestion):
     }
 
 @router.post("/patients")
-def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
+def create_patient(patient: PatientCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     if patient.ai_urgency and patient.ai_department and patient.ai_reasoning:
         ai_urgency = patient.ai_urgency
         ai_department = patient.ai_department
@@ -89,12 +90,12 @@ def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/patients")
-def get_all_patients(db: Session = Depends(get_db)):
+def get_all_patients(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     return db.query(Patient).order_by(Patient.created_at.desc()).all()
 
 
 @router.get("/patients/search")
-def search_patients(q: str, db: Session = Depends(get_db)):
+def search_patients(q: str, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     results = db.query(Patient).filter(
         or_(
             Patient.name.ilike(f"%{q}%"),
@@ -106,7 +107,7 @@ def search_patients(q: str, db: Session = Depends(get_db)):
 
 
 @router.patch("/patients/{patient_id}/override")
-def override_triage(patient_id: int, override: TriageOverride, db: Session = Depends(get_db)):
+def override_triage(patient_id: int, override: TriageOverride, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
@@ -121,7 +122,7 @@ def override_triage(patient_id: int, override: TriageOverride, db: Session = Dep
 
 
 @router.get("/stats")
-def get_stats(db: Session = Depends(get_db)):
+def get_stats(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     total = db.query(Patient).count()
     urgent = db.query(Patient).filter(Patient.final_urgency == "Urgent").count()
     priority = db.query(Patient).filter(Patient.final_urgency == "Priority").count()
