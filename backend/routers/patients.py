@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, cast, Date
 from database import get_db
 from models.patient import Patient
 from services.triage_service import get_triage_suggestion
 from pydantic import BaseModel
 from typing import Optional
 from dependencies import get_current_user
+from datetime import date
 
 router = APIRouter()
 
@@ -26,10 +27,10 @@ class PatientCreate(BaseModel):
     was_overridden: Optional[bool] = False
 
 class PatientSuggestion(BaseModel):
-    name: str
-    age: int
-    gender: str
-    contact: str
+    name: str = ""
+    age: int = 0
+    gender: str = ""
+    contact: str = ""
     symptoms: str
 
 class TriageOverride(BaseModel):
@@ -40,7 +41,7 @@ class TriageOverride(BaseModel):
 # --- Routes ---
 
 @router.post("/patients/suggest")
-def suggest_patient(patient: PatientSuggestion):
+def suggest_patient(patient: PatientSuggestion, current_user=Depends(get_current_user)):
     triage = get_triage_suggestion(patient.symptoms)
     return {
         "name": patient.name,
@@ -123,14 +124,34 @@ def override_triage(patient_id: int, override: TriageOverride, db: Session = Dep
 
 @router.get("/stats")
 def get_stats(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    total = db.query(Patient).count()
-    urgent = db.query(Patient).filter(Patient.final_urgency == "Urgent").count()
-    priority = db.query(Patient).filter(Patient.final_urgency == "Priority").count()
-    routine = db.query(Patient).filter(Patient.final_urgency == "Routine").count()
-    overridden = db.query(Patient).filter(Patient.was_overridden == True).count()
+    today = date.today()
+
+    total_today = db.query(Patient).filter(
+        cast(Patient.created_at, Date) == today
+    ).count()
+
+    urgent = db.query(Patient).filter(
+        cast(Patient.created_at, Date) == today,
+        Patient.final_urgency == "Urgent"
+    ).count()
+
+    priority = db.query(Patient).filter(
+        cast(Patient.created_at, Date) == today,
+        Patient.final_urgency == "Priority"
+    ).count()
+
+    routine = db.query(Patient).filter(
+        cast(Patient.created_at, Date) == today,
+        Patient.final_urgency == "Routine"
+    ).count()
+
+    overridden = db.query(Patient).filter(
+        cast(Patient.created_at, Date) == today,
+        Patient.was_overridden == True
+    ).count()
 
     return {
-        "total": total,
+        "total": total_today,
         "urgent": urgent,
         "priority": priority,
         "routine": routine,

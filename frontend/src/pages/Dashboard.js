@@ -190,7 +190,11 @@ const Dashboard = () => {
     setLoading(false);
   };
 
-  const handleCheck = id => setChecked(prev => ({ ...prev, [id]: !prev[id] }));
+  const handleCheck = (id) => {
+      // Add to checked — never removes once checked
+      setChecked(prev => ({ ...prev, [id]: true }));
+  };
+
   const visibleWaiting = waiting.filter(p => !checked[p.id]);
 
   const trendPatients = filterPatientsByRange(waiting, trendRange);
