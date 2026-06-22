@@ -7,11 +7,12 @@ load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def get_triage_suggestion(symptoms: str) -> dict:
+def get_triage_suggestion(age:int, gender: str, symptoms: str) -> dict:
     prompt = f"""
-    You are a medical triage assistant. Based on the symptoms described below, 
+    You are a medical triage assistant. Based on the data and symptoms described below, 
     provide a triage assessment.
-
+    Age:{age}
+    Gender:{gender}
     Symptoms: {symptoms}
 
     Respond ONLY with a valid JSON object in this exact format, nothing else:

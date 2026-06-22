@@ -42,7 +42,7 @@ class TriageOverride(BaseModel):
 
 @router.post("/patients/suggest")
 def suggest_patient(patient: PatientSuggestion, current_user=Depends(get_current_user)):
-    triage = get_triage_suggestion(patient.symptoms)
+    triage = get_triage_suggestion(patient.age, patient.gender, patient.symptoms)
     return {
         "name": patient.name,
         "age": patient.age,
